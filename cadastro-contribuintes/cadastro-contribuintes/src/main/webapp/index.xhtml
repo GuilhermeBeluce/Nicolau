@@ -1,0 +1,27 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/principal.xhtml">
+
+    <ui:define name="titulo">Início — Cadastro de Contribuintes</ui:define>
+
+    <ui:define name="breadcrumb">
+        <span class="breadcrumb-item breadcrumb-atual">Início</span>
+    </ui:define>
+
+    <ui:define name="conteudo">
+        <section class="cartao cartao-inicial">
+            <h1>Cadastro de Contribuintes</h1>
+            <p class="texto-introducao">
+                Gerencie o cadastro de contribuintes pessoa física (CPF) e pessoa
+                jurídica (CNPJ): inclua, pesquise, detalhe, altere e exclua
+                registros em um único lugar.
+            </p>
+            <h:link outcome="/contribuintes/lista" styleClass="botao botao-primario">
+                Acessar a listagem de contribuintes
+            </h:link>
+        </section>
+    </ui:define>
+
+</ui:composition>

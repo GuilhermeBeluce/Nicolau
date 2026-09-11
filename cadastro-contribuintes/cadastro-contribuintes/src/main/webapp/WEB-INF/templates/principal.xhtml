@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+<h:head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title><ui:insert name="titulo">Cadastro de Contribuintes</ui:insert></title>
+    <h:outputStylesheet library="css" name="estilo.css"/>
+</h:head>
+<h:body>
+    <header class="cabecalho">
+        <div class="cabecalho-conteudo">
+            <span class="cabecalho-titulo">Cadastro de Contribuintes</span>
+            <nav class="menu-principal" aria-label="Menu principal">
+                <h:link outcome="/index" value="Início" styleClass="menu-link"/>
+                <h:link outcome="/contribuintes/lista" value="Contribuintes" styleClass="menu-link"/>
+            </nav>
+        </div>
+    </header>
+
+    <main class="conteudo">
+        <nav class="breadcrumbs" aria-label="Localização atual">
+            <ui:insert name="breadcrumb"/>
+        </nav>
+
+        <h:messages id="mensagensGlobais"
+                    globalOnly="true" showDetail="true" showSummary="true"
+                    layout="list" styleClass="lista-mensagens"
+                    errorClass="mensagem mensagem-erro"
+                    infoClass="mensagem mensagem-sucesso"
+                    warnClass="mensagem mensagem-atencao"/>
+
+        <ui:insert name="conteudo"/>
+    </main>
+
+    <footer class="rodape">
+        <p>Cadastro de Contribuintes &#8212; uso interno</p>
+    </footer>
+</h:body>
+</html>

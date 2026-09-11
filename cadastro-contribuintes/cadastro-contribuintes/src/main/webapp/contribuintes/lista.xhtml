@@ -1,0 +1,147 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/principal.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="documento" value="#{contribuinteListagemBean.filtro.documento}"/>
+        <f:viewParam name="nome" value="#{contribuinteListagemBean.filtro.nomeRazaoSocial}"/>
+        <f:viewParam name="pagina" value="#{contribuinteListagemBean.filtro.pagina}"/>
+        <f:viewAction action="#{contribuinteListagemBean.inicializar}"/>
+    </f:metadata>
+
+    <ui:define name="titulo">Contribuintes — Cadastro de Contribuintes</ui:define>
+
+    <ui:define name="breadcrumb">
+        <h:link outcome="/index" value="Início" styleClass="breadcrumb-item"/>
+        <span class="breadcrumb-separador">/</span>
+        <span class="breadcrumb-item breadcrumb-atual">Contribuintes</span>
+    </ui:define>
+
+    <ui:define name="conteudo">
+
+        <div class="barra-acoes">
+            <h1>Contribuintes</h1>
+            <h:link outcome="/contribuintes/formulario" styleClass="botao botao-primario">
+                Novo contribuinte
+            </h:link>
+        </div>
+
+        <h:form id="formPesquisa" styleClass="cartao formulario-pesquisa">
+            <div class="grupo-campos grupo-campos-pesquisa">
+                <div class="campo">
+                    <h:outputLabel for="documento" value="Documento"/>
+                    <h:inputText id="documento" value="#{contribuinteListagemBean.filtro.documento}"
+                                 placeholder="CPF ou CNPJ"/>
+                </div>
+                <div class="campo">
+                    <h:outputLabel for="nome" value="Nome / Razão social"/>
+                    <h:inputText id="nome" value="#{contribuinteListagemBean.filtro.nomeRazaoSocial}"
+                                 placeholder="Parte do nome ou razão social"/>
+                </div>
+                <div class="campo campo-acoes-pesquisa">
+                    <h:commandButton value="Pesquisar" action="#{contribuinteListagemBean.pesquisar}"
+                                     styleClass="botao botao-primario"/>
+                    <h:commandButton value="Limpar filtros" action="#{contribuinteListagemBean.limparFiltros}"
+                                      immediate="true" styleClass="botao botao-secundario"/>
+                </div>
+            </div>
+        </h:form>
+
+        <section class="cartao">
+            <h:dataTable value="#{contribuinteListagemBean.resultado.registros}" var="c"
+                         styleClass="tabela-dados" headerClass="tabela-cabecalho"
+                         rowClasses="linha-par,linha-impar"
+                         rendered="#{not empty contribuinteListagemBean.resultado.registros}">
+
+                <h:column>
+                    <f:facet name="header">Documento</f:facet>
+                    #{contribuinteListagemBean.mascararDocumento(c)}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Nome / Razão social</f:facet>
+                    #{c.razaoSocialNome}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Tipo</f:facet>
+                    #{c.tipoDocumento}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Cidade / UF</f:facet>
+                    #{c.cidadeSede} - #{c.estadoUf}
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Ações</f:facet>
+                    <div class="acoes-linha">
+                        <h:link outcome="/contribuintes/detalhe" value="Detalhar" styleClass="link-acao">
+                            <f:param name="tipo" value="#{c.tipoDocumento}"/>
+                            <f:param name="documento" value="#{contribuinteListagemBean.documentoNormalizadoParaLink(c)}"/>
+                            <f:param name="origemPagina" value="#{contribuinteListagemBean.filtro.pagina}"/>
+                            <f:param name="origemDocumento" value="#{contribuinteListagemBean.filtro.documento}"/>
+                            <f:param name="origemNome" value="#{contribuinteListagemBean.filtro.nomeRazaoSocial}"/>
+                        </h:link>
+                        <h:link outcome="/contribuintes/formulario" value="Alterar" styleClass="link-acao">
+                            <f:param name="tipo" value="#{c.tipoDocumento}"/>
+                            <f:param name="documento" value="#{contribuinteListagemBean.documentoNormalizadoParaLink(c)}"/>
+                            <f:param name="origemPagina" value="#{contribuinteListagemBean.filtro.pagina}"/>
+                            <f:param name="origemDocumento" value="#{contribuinteListagemBean.filtro.documento}"/>
+                            <f:param name="origemNome" value="#{contribuinteListagemBean.filtro.nomeRazaoSocial}"/>
+                        </h:link>
+                        <h:form>
+                            <h:commandButton value="Excluir" styleClass="link-acao link-acao-destrutiva"
+                                             action="#{contribuinteListagemBean.prepararExclusao(c)}"/>
+                        </h:form>
+                    </div>
+                </h:column>
+            </h:dataTable>
+
+            <p class="texto-vazio" rendered="#{empty contribuinteListagemBean.resultado.registros}">
+                Nenhum contribuinte encontrado para os filtros informados.
+            </p>
+
+            <div class="paginacao" rendered="#{not empty contribuinteListagemBean.resultado.registros}">
+                <h:form>
+                    <h:commandButton value="Anterior" action="#{contribuinteListagemBean.paginaAnterior}"
+                                     disabled="#{contribuinteListagemBean.resultado.primeiraPagina}"
+                                     styleClass="botao botao-secundario"/>
+                    <span class="paginacao-texto">
+                        Página #{contribuinteListagemBean.resultado.paginaAtual}
+                        de #{contribuinteListagemBean.resultado.totalPaginas}
+                        (#{contribuinteListagemBean.resultado.totalRegistros} registros)
+                    </span>
+                    <h:commandButton value="Próximo" action="#{contribuinteListagemBean.proximaPagina}"
+                                     disabled="#{contribuinteListagemBean.resultado.ultimaPagina}"
+                                     styleClass="botao botao-secundario"/>
+                </h:form>
+            </div>
+        </section>
+
+        <div class="sobreposicao" rendered="#{contribuinteListagemBean.contribuinteSelecionadoParaExclusao != null}">
+            <div class="dialogo-confirmacao cartao" role="alertdialog" aria-live="assertive">
+                <h2>Confirmar exclusão</h2>
+                <p>
+                    Deseja realmente excluir o contribuinte
+                    <strong>#{contribuinteListagemBean.contribuinteSelecionadoParaExclusao.razaoSocialNome}</strong>,
+                    documento
+                    <strong>#{contribuinteListagemBean.mascararDocumento(contribuinteListagemBean.contribuinteSelecionadoParaExclusao)}</strong>?
+                    Esta ação não pode ser desfeita.
+                </p>
+                <h:form>
+                    <div class="grupo-botoes">
+                        <h:commandButton value="Cancelar" action="#{contribuinteListagemBean.cancelarExclusao}"
+                                         styleClass="botao botao-secundario"/>
+                        <h:commandButton value="Confirmar exclusão" action="#{contribuinteListagemBean.confirmarExclusao}"
+                                         styleClass="botao botao-destrutivo"/>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+    </ui:define>
+
+</ui:composition>

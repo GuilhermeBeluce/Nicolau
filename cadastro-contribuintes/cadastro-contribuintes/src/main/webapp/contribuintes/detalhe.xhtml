@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/principal.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="tipo" value="#{contribuinteDetalheBean.tipoParam}"/>
+        <f:viewParam name="documento" value="#{contribuinteDetalheBean.documentoParam}"/>
+        <f:viewParam name="origemPagina" value="#{contribuinteDetalheBean.origemPagina}"/>
+        <f:viewParam name="origemDocumento" value="#{contribuinteDetalheBean.origemDocumento}"/>
+        <f:viewParam name="origemNome" value="#{contribuinteDetalheBean.origemNome}"/>
+        <f:viewAction action="#{contribuinteDetalheBean.inicializar}"/>
+    </f:metadata>
+
+    <ui:define name="titulo">Detalhes do contribuinte — Cadastro de Contribuintes</ui:define>
+
+    <ui:define name="breadcrumb">
+        <h:link outcome="/index" value="Início" styleClass="breadcrumb-item"/>
+        <span class="breadcrumb-separador">/</span>
+        <h:link outcome="/contribuintes/lista" value="Contribuintes" styleClass="breadcrumb-item"/>
+        <span class="breadcrumb-separador">/</span>
+        <span class="breadcrumb-item breadcrumb-atual">Detalhar</span>
+    </ui:define>
+
+    <ui:define name="conteudo">
+
+        <h:panelGroup rendered="#{contribuinteDetalheBean.registroNaoEncontrado}">
+            <section class="cartao">
+                <p class="mensagem mensagem-atencao">
+                    O contribuinte não foi localizado. Atualize a listagem e tente novamente.
+                </p>
+                <h:link outcome="/contribuintes/lista" styleClass="botao botao-secundario">
+                    Voltar para a listagem
+                </h:link>
+            </section>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{not contribuinteDetalheBean.registroNaoEncontrado}">
+            <h1>Detalhes do contribuinte</h1>
+
+            <section class="cartao detalhe">
+                <dl class="lista-detalhes">
+                    <dt>Tipo de documento</dt>
+                    <dd>#{contribuinteDetalheBean.tipoDocumentoExibicao}</dd>
+
+                    <dt>Documento</dt>
+                    <dd>#{contribuinteDetalheBean.documentoMascarado}</dd>
+
+                    <dt>Nome / Razão social</dt>
+                    <dd>#{contribuinteDetalheBean.contribuinte.razaoSocialNome}</dd>
+
+                    <dt>Nome fantasia</dt>
+                    <dd>#{contribuinteDetalheBean.nomeFantasiaExibicao}</dd>
+
+                    <dt>E-mail</dt>
+                    <dd>#{contribuinteDetalheBean.contribuinte.emailCorporativo}</dd>
+
+                    <dt>Telefone</dt>
+                    <dd>#{contribuinteDetalheBean.telefoneExibicao}</dd>
+
+                    <dt>Cidade / UF</dt>
+                    <dd>#{contribuinteDetalheBean.cidadeUfExibicao}</dd>
+
+                    <dt>Data de abertura</dt>
+                    <dd>#{contribuinteDetalheBean.dataAberturaExibicao}</dd>
+
+                    <dt>Quantidade de funcionários</dt>
+                    <dd>#{contribuinteDetalheBean.quantidadeFuncionariosExibicao}</dd>
+
+                    <dt>Faturamento anual</dt>
+                    <dd>#{contribuinteDetalheBean.faturamentoAnualExibicao}</dd>
+                </dl>
+
+                <div class="grupo-botoes">
+                    <h:link outcome="/contribuintes/formulario" styleClass="botao botao-primario">
+                        Alterar
+                        <f:param name="tipo" value="#{contribuinteDetalheBean.tipoDocumentoExibicao}"/>
+                        <f:param name="documento" value="#{contribuinteDetalheBean.documentoParam}"/>
+                        <f:param name="origemPagina" value="#{contribuinteDetalheBean.origemPagina}"/>
+                        <f:param name="origemDocumento" value="#{contribuinteDetalheBean.origemDocumento}"/>
+                        <f:param name="origemNome" value="#{contribuinteDetalheBean.origemNome}"/>
+                    </h:link>
+
+                    <h:link outcome="/contribuintes/lista" styleClass="botao botao-secundario">
+                        Voltar
+                        <f:param name="pagina" value="#{contribuinteDetalheBean.origemPagina}"/>
+                        <f:param name="documento" value="#{contribuinteDetalheBean.origemDocumento}"/>
+                        <f:param name="nome" value="#{contribuinteDetalheBean.origemNome}"/>
+                    </h:link>
+                </div>
+            </section>
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

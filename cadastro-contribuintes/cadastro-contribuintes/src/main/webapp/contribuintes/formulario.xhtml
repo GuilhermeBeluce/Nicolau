@@ -1,0 +1,199 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/templates/principal.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="tipo" value="#{contribuinteFormBean.tipoParam}"/>
+        <f:viewParam name="documento" value="#{contribuinteFormBean.documentoParam}"/>
+        <f:viewParam name="origemPagina" value="#{contribuinteFormBean.origemPagina}"/>
+        <f:viewParam name="origemDocumento" value="#{contribuinteFormBean.origemDocumento}"/>
+        <f:viewParam name="origemNome" value="#{contribuinteFormBean.origemNome}"/>
+        <f:viewAction action="#{contribuinteFormBean.inicializar}"/>
+    </f:metadata>
+
+    <ui:define name="titulo">
+        #{contribuinteFormBean.modoAlteracao ? 'Alterar contribuinte' : 'Novo contribuinte'} — Cadastro de Contribuintes
+    </ui:define>
+
+    <ui:define name="breadcrumb">
+        <h:link outcome="/index" value="Início" styleClass="breadcrumb-item"/>
+        <span class="breadcrumb-separador">/</span>
+        <h:link outcome="/contribuintes/lista" value="Contribuintes" styleClass="breadcrumb-item"/>
+        <span class="breadcrumb-separador">/</span>
+        <span class="breadcrumb-item breadcrumb-atual">
+            #{contribuinteFormBean.modoAlteracao ? 'Alterar' : 'Novo'}
+        </span>
+    </ui:define>
+
+    <ui:define name="conteudo">
+
+        <h:panelGroup rendered="#{contribuinteFormBean.isRegistroNaoEncontrado()}">
+            <section class="cartao">
+                <p class="mensagem mensagem-atencao">
+                    O contribuinte não foi localizado. Atualize a listagem e tente novamente.
+                </p>
+                <h:link outcome="/contribuintes/lista" styleClass="botao botao-secundario">
+                    Voltar para a listagem
+                </h:link>
+            </section>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{not contribuinteFormBean.isRegistroNaoEncontrado()}">
+            <h1>#{contribuinteFormBean.modoAlteracao ? 'Alterar contribuinte' : 'Novo contribuinte'}</h1>
+
+            <h:panelGroup rendered="#{not empty requestScope.focoCampoInvalido}">
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var campo = document.getElementById('formularioContribuinte:#{requestScope.focoCampoInvalido}');
+                        if (campo) { campo.focus(); }
+                    });
+                </script>
+            </h:panelGroup>
+
+            <h:form id="formularioContribuinte" styleClass="cartao formulario">
+
+                <fieldset class="grupo-formulario">
+                    <legend>Identificação</legend>
+
+                    <div class="campo">
+                        <h:outputLabel for="tipoDocumento" value="Tipo de documento *"/>
+                        <h:selectOneMenu id="tipoDocumento" value="#{contribuinteFormBean.formulario.tipoDocumento}"
+                                         disabled="#{contribuinteFormBean.modoAlteracao}">
+                            <f:selectItem itemLabel="Selecione..." itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{contribuinteFormBean.tiposDocumento}"/>
+                            <f:ajax listener="#{contribuinteFormBean.aoAlterarTipoDocumento}"
+                                    render="documento nomeFantasia quantidadeFuncionarios"/>
+                        </h:selectOneMenu>
+                        <h:message for="tipoDocumento" styleClass="mensagem-campo"/>
+                    </div>
+
+                    <div class="campo">
+                        <h:outputLabel for="documento" value="Documento *"/>
+                        <h:inputText id="documento" value="#{contribuinteFormBean.formulario.documentoBruto}"
+                                     disabled="#{contribuinteFormBean.modoAlteracao or empty contribuinteFormBean.formulario.tipoDocumento}"
+                                     placeholder="#{contribuinteFormBean.formulario.tipoDocumento eq 'CNPJ' ? '99.999.999/9999-99' : '999.999.999-99'}"/>
+                        <h:message for="documento" styleClass="mensagem-campo"/>
+                    </div>
+                </fieldset>
+
+                <fieldset class="grupo-formulario">
+                    <legend>Dados cadastrais</legend>
+
+                    <div class="campo">
+                        <h:outputLabel for="razaoSocialNome" value="Nome / Razão social *"/>
+                        <h:inputText id="razaoSocialNome" value="#{contribuinteFormBean.formulario.razaoSocialNome}"
+                                     maxlength="120"/>
+                        <h:message for="razaoSocialNome" styleClass="mensagem-campo"/>
+                    </div>
+
+                    <div class="campo" id="nomeFantasia">
+                        <h:panelGroup rendered="#{contribuinteFormBean.formulario.cnpj}">
+                            <h:outputLabel for="nomeFantasiaInput" value="Nome fantasia"/>
+                            <h:inputText id="nomeFantasiaInput" value="#{contribuinteFormBean.formulario.nomeFantasia}"
+                                         maxlength="80"/>
+                            <h:message for="nomeFantasiaInput" styleClass="mensagem-campo"/>
+                        </h:panelGroup>
+                    </div>
+                </fieldset>
+
+                <fieldset class="grupo-formulario">
+                    <legend>Contato</legend>
+
+                    <div class="campo">
+                        <h:outputLabel for="email" value="E-mail *"/>
+                        <h:inputText id="email" value="#{contribuinteFormBean.formulario.emailCorporativo}"
+                                     maxlength="100"/>
+                        <h:message for="email" styleClass="mensagem-campo"/>
+                    </div>
+
+                    <div class="grupo-campos">
+                        <div class="campo campo-pequeno">
+                            <h:outputLabel for="ddd" value="DDD *"/>
+                            <h:inputText id="ddd" value="#{contribuinteFormBean.formulario.dddTelefone}" maxlength="2"/>
+                            <h:message for="ddd" styleClass="mensagem-campo"/>
+                        </div>
+                        <div class="campo">
+                            <h:outputLabel for="telefone" value="Telefone *"/>
+                            <h:inputText id="telefone" value="#{contribuinteFormBean.formulario.numeroTelefone}" maxlength="9"/>
+                            <h:message for="telefone" styleClass="mensagem-campo"/>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="grupo-formulario">
+                    <legend>Localização</legend>
+
+                    <div class="grupo-campos">
+                        <div class="campo">
+                            <h:outputLabel for="cidade" value="Cidade *"/>
+                            <h:inputText id="cidade" value="#{contribuinteFormBean.formulario.cidadeSede}" maxlength="60"/>
+                            <h:message for="cidade" styleClass="mensagem-campo"/>
+                        </div>
+                        <div class="campo campo-pequeno">
+                            <h:outputLabel for="uf" value="UF *"/>
+                            <h:selectOneMenu id="uf" value="#{contribuinteFormBean.formulario.estadoUf}">
+                                <f:selectItem itemLabel="UF" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{contribuinteFormBean.ufsDisponiveis}"/>
+                            </h:selectOneMenu>
+                            <h:message for="uf" styleClass="mensagem-campo"/>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="grupo-formulario">
+                    <legend>Dados econômicos</legend>
+
+                    <div class="grupo-campos">
+                        <div class="campo">
+                            <h:outputLabel for="dataAbertura" value="Data de abertura *"/>
+                            <h:inputText id="dataAbertura" value="#{contribuinteFormBean.formulario.dataAbertura}">
+                                <f:passThroughAttribute name="type" value="date"/>
+                                <f:convertDateTime type="localDate" pattern="yyyy-MM-dd"/>
+                            </h:inputText>
+                            <h:message for="dataAbertura" styleClass="mensagem-campo"/>
+                        </div>
+
+                        <div class="campo campo-pequeno" id="quantidadeFuncionarios">
+                            <h:panelGroup rendered="#{contribuinteFormBean.formulario.cnpj}">
+                                <h:outputLabel for="quantidadeFuncionariosInput" value="Qtd. funcionários *"/>
+                                <h:inputText id="quantidadeFuncionariosInput"
+                                             value="#{contribuinteFormBean.formulario.quantidadeFuncionarios}">
+                                    <f:passThroughAttribute name="type" value="number"/>
+                                </h:inputText>
+                                <h:message for="quantidadeFuncionariosInput" styleClass="mensagem-campo"/>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <h:outputLabel for="faturamentoAnual" value="Faturamento anual (R$) *"/>
+                        <h:inputText id="faturamentoAnual" value="#{contribuinteFormBean.formulario.faturamentoAnual}"
+                                     placeholder="0.00">
+                            <f:convertNumber pattern="0.00" locale="en"/>
+                        </h:inputText>
+                        <h:message for="faturamentoAnual" styleClass="mensagem-campo"/>
+                    </div>
+                </fieldset>
+
+                <div class="grupo-botoes">
+                    <h:commandButton value="#{contribuinteFormBean.modoAlteracao ? 'Salvar alterações' : 'Salvar'}"
+                                     action="#{contribuinteFormBean.salvar}"
+                                     disabled="#{contribuinteFormBean.salvando}"
+                                     styleClass="botao botao-primario"
+                                     onclick="var b=this; window.setTimeout(function(){ b.disabled = true; }, 0);"/>
+
+                    <h:commandButton value="Restaurar" action="#{contribuinteFormBean.restaurar}"
+                                      rendered="#{contribuinteFormBean.modoAlteracao}"
+                                      immediate="true" styleClass="botao botao-secundario"/>
+
+                    <h:commandButton value="Cancelar" action="#{contribuinteFormBean.cancelar}"
+                                      immediate="true" styleClass="botao botao-secundario"/>
+                </div>
+            </h:form>
+        </h:panelGroup>
+
+    </ui:define>
+
+</ui:composition>

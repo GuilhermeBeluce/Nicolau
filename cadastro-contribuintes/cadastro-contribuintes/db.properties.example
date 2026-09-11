@@ -1,0 +1,9 @@
+# Exemplo de variaveis de ambiente necessarias para a aplicacao se conectar ao MySQL.
+# Nao coloque valores reais neste arquivo de exemplo nem no controle de versao
+# com dados sensiveis preenchidos. Configure os valores reais como variaveis de
+# ambiente do sistema operacional ou na configuracao de execucao do IntelliJ IDEA
+# (Run/Debug Configurations > Environment variables).
+
+DB_URL=jdbc:mysql://localhost:3306/cadastro_contribuintes?useSSL=false&serverTimezone=America/Sao_Paulo&characterEncoding=UTF-8
+DB_USER=seu_usuario_mysql
+DB_PASSWORD=sua_senha_mysql

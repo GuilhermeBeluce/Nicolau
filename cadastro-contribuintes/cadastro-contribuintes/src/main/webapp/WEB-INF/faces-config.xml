@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<faces-config xmlns="https://jakarta.ee/xml/ns/jakartaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+                  https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_4_0.xsd"
+              version="4.0">
+
+    <!-- Configuracao intencionalmente minima: os Managed Beans sao
+         descobertos via CDI (@Named), nao ha necessidade de <managed-bean>
+         nem de regras de navegacao explicitas (usamos navegacao implicita
+         e outcomes com faces-redirect=true). -->
+
+</faces-config>
